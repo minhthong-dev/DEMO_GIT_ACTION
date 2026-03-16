@@ -25,15 +25,21 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       # Trích xuất metadata (tags, labels) cho Docker image
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Get commit count
+        id: count
+        run: echo "total=$(git rev-list --count HEAD)" >> $GITHUB_OUTPUT
+
+      # 2. Cấu hình Tag tự động
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/nguyenquocminhthong
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=sha,format=short
+            # Tag theo số commit: 1.0.152
+            type=raw,value=1.0.${{ steps.count.outputs.total }}
+            # Luôn cập nhật tag latest
+            type=raw,value=latest
 
       # Build và Push image lên Docker Hub
       - name: Build and push Docker image
