@@ -1,0 +1,12 @@
+name: automation docker
+
+on:
+  push:
+    branches: ["main"]
+jobs:
+  docker:
+   runs-on: ubuntu-latest
+
+   steps:
+     - name: bat dau chay
+       run : echo"xin chao docker"
