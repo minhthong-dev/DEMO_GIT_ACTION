@@ -9,4 +9,4 @@ jobs:
 
    steps:
      - name: bat dau chay
-       run : echo"xin chao docker"
+       run : echo "xin chao docker"
