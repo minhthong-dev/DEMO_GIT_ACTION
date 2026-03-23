@@ -44,3 +44,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      # Deploy lên server bằng Webhook URL
+      - name: Trigger Server Deployment
+        run: |
+          curl -X POST "${{ secrets.DEPLOY_URL }}" \
+          -H "Content-Type: application/json" \
+          --fail
