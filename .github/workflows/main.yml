@@ -13,18 +13,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      # Thiết lập Docker Buildx để hỗ trợ build nâng cao
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Đăng nhập vào Docker Hub sử dụng secrets đã cấu hình
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      # Trích xuất metadata (tags, labels) cho Docker image
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -34,9 +31,8 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha,format=short
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
-      # Build và Push image lên Docker Hub
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -44,9 +40,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      # Deploy lên server bằng Webhook URL
+
+      # Bước Deploy quan trọng
       - name: Trigger Server Deployment
         run: |
-          curl -X POST "${{ secrets.DEPLOY_URL }}" \
-          -H "Content-Type: application/json" \
-          --fail
+          curl -X GET "${{ secrets.DEPLOY_URL }}" \
+          --max-time 30 \
+          --verbose
